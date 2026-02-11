@@ -1,0 +1,42 @@
+name: Build & Upload to AutoDevice
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Build with EAS (cloud)
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas build --platform android --profile preview --non-interactive --wait
+
+      - name: Download build artifact
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          BUILD_URL=$(eas build:list --platform android --limit 1 --json --non-interactive | jq -r '.[0].artifacts.buildUrl')
+          curl -L -o app.apk "$BUILD_URL"
+
+      - name: Upload to AutoDevice
+        run: |
+          curl -X POST "https://api.autodevice.io/v1/builds" \
+            -H "Authorization: Bearer ${{ secrets.AUTODEVICE_API_KEY }}" \
+            -F "file=@app.apk" \
+            -F "platform=android"

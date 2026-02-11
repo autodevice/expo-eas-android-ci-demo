@@ -1,15 +1,24 @@
-# expo-eas-android-ci-demo
+# ExpoEASAndroidDemo
 
-Expo Android CI demo using EAS Build for building Expo apps on Android
+Expo Android app built via **EAS Build (cloud)** and uploaded to [AutoDevice](https://autodevice.io).
 
-## Overview
+## Build Method
 
-This repository is a demo project for [AutoDevice](https://autodevice.dev) CI integration.
+- **Platform**: Android (APK)
+- **Build**: EAS Build (cloud) — builds run on Expo's servers
+- **CI Runner**: `ubuntu-latest`
+- **Profile**: `preview` (produces APK for internal distribution)
 
-## Getting Started
+## Required Secrets
 
-Coming soon.
+| Secret | Description |
+|--------|-------------|
+| `EXPO_TOKEN` | Expo access token for EAS Build authentication |
+| `AUTODEVICE_API_KEY` | AutoDevice API key for uploading builds |
 
-## License
+## Local Development
 
-MIT
+```bash
+npm install
+npx expo start
+```
